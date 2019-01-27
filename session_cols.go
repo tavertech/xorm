@@ -197,3 +197,9 @@ func (session *Session) NoAutoTime() *Session {
 	session.statement.UseAutoTime = false
 	return session
 }
+
+// SetIdentity on
+func (session *Session) SetIdentity(enable bool) *Session {
+	session.statement.UseIdentity = enable
+	return session
+}

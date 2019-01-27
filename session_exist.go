@@ -19,6 +19,10 @@ func (session *Session) Exist(bean ...interface{}) (bool, error) {
 		defer session.Close()
 	}
 
+	if session.statement.lastError != nil {
+		return false, session.statement.lastError
+	}
+
 	var sqlStr string
 	var args []interface{}
 	var err error
@@ -37,14 +41,14 @@ func (session *Session) Exist(bean ...interface{}) (bool, error) {
 				}
 
 				if session.engine.dialect.DBType() == core.MSSQL {
-					sqlStr = fmt.Sprintf("SELECT top 1 * FROM %s WHERE %s", tableName, condSQL)
+					sqlStr = fmt.Sprintf("SELECT TOP 1 * FROM %s WHERE %s", tableName, condSQL)
 				} else {
 					sqlStr = fmt.Sprintf("SELECT * FROM %s WHERE %s LIMIT 1", tableName, condSQL)
 				}
 				args = condArgs
 			} else {
 				if session.engine.dialect.DBType() == core.MSSQL {
-					sqlStr = fmt.Sprintf("SELECT top 1 * FROM %s", tableName)
+					sqlStr = fmt.Sprintf("SELECT TOP 1 * FROM %s", tableName)
 				} else {
 					sqlStr = fmt.Sprintf("SELECT * FROM %s LIMIT 1", tableName)
 				}
